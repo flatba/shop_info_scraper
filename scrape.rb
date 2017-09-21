@@ -5,21 +5,25 @@ require 'nokogiri'
 require 'csv'
 
 
+base_url = "https://www.rakuten.co.jp/shop/"
+search_word = "http://directory.rakuten.co.jp/rms/sd/directory/vc/s19tz"
+shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
+
 # [DONE]ページに含まれるショップジャンルURLを配列に格納する
-def make_shop_genre_url_arr(url_base)
+def make_shop_genre_url_arr( read_url, read_word )
   shop_genre_url_arr = Array.new
-  url = Nokogiri.HTML(open(url_base))
+  url = Nokogiri.HTML(open(read_url))
   url.css('a').each do |element|
     url =  element[:href]
-    if url.include?("http://directory.rakuten.co.jp/rms/sd/directory/vc/s19tz") then
+    if url.include?(read_word) then
       shop_genre_url_arr.push(element[:href])
     end
   end
   return shop_genre_url_arr
 end
 
-make_shop_genre_url_all_arr = make_shop_genre_url_arr("https://www.rakuten.co.jp/shop/")
-puts make_shop_genre_url_all_arr
+make_shop_genre_url_all = make_shop_genre_url_arr(base_url, search_word)
+# puts make_shop_genre_url_all
 
 
 # private def makeArr(url)
@@ -38,38 +42,52 @@ puts make_shop_genre_url_all_arr
 
 
 # ショップジャンルURLを開く
-# max_num = shop_genre_url_arr.count
-max_num = 2
+# max_num = make_shop_genre_url_all.count
+max_num = 1
 for shop_genre_num in 0..max_num
 
-  shop_genre_url = Nokogiri.HTML(open(make_shop_genre_url_all_arr[shop_genre_num]))
-  # shop_genre_url.css('a').each do |element|
-  #   url =  element[:href]
-  #   puts url
-  # end
-Nokogiriのopenは２個行けるのはわかった
+  begin
 
+    url = make_shop_genre_url_all[shop_genre_num]
+    charset = nil
+    html = open(url) do |f|
+      charset = f.charset
+      f.read
+    end
+    shop_genre_url = Nokogiri::HTML.parse(html, nil, charset)
 
-  # shop_genre_url.css('a').each do |element|
-  #   url =  element[:href] # URL
+    # 1ページ目の情報を取得する
+    # shop_info_arr = makeArr(shop_url)
+    shop_info_arr = Array.new(size = 7, obj = "")
+    name                        = "ショップ名"
+    url                         = "楽天ショップURL"
+    number_of_impressions       = "感想数"
+    genre                       = shop_genre_url.title # "ジャンル"
+    opening_date                = "開店日"
+    credit_propriety            = "クレジット決済可否"
+    convenience_store_propriety = "コンビニ決済可否"
+    shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+    shop_genre_info_all_arr.push(shop_info_arr)
 
-  # end
+    # puts shop_genre_info_all_arr
 
-  # # ショップジャンルURLから得られたショップ情報を貯める
-  # shop_genre_info_all_arr = Array.new
+    # puts
+    # puts shop_genre_url.at('//tbody')
 
-  # # 1ページ目の情報を取得する
-  # # shop_info_arr = makeArr(shop_url)
-  # shop_info_arr = Array.new(size = 7, obj = "")
-  # name                        = "ショップ名"
-  # url                         = "楽天ショップURL"
-  # number_of_impressions       = "感想数"
-  # genre                       = "ジャンル"
-  # opening_date                = "開店日"
-  # credit_propriety            = "クレジット決済可否"
-  # convenience_store_propriety = "コンビニ決済可否"
-  # shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
-  # shop_genre_info_all_arr.push(shop_info_arr)
+  rescue => e
+    print("Error:")
+    puts e
+  end
+
+  # xpath地獄にハマるので、具体的な値の取得より先にロジックを組んでしまいます。
+
+  # 2件目以降のURLを取得するためのベース
+  onward_second_page_url = shop_genre_url.xpath('//tr[@valign="top"]/td/font[@size="-1"]/a/@href').first.to_s
+  length_num = onward_second_page_url.length
+  slice_num = onward_second_page_url.index("&p=")+3
+  url_head = onward_second_page_url[0, slice_num]
+  url_tail = onward_second_page_url[slice_num+1, length_num]
+  onward_second_page_url = url_head + "あああ" + url_tail
 
   # # 2ページ目以降のページに移動する
   # # 全店舗数を取得する
@@ -113,4 +131,5 @@ Nokogiriのopenは２個行けるのはわかった
 
 end
 
+puts onward_second_page_url
 
