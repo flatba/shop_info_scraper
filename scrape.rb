@@ -35,32 +35,54 @@ private def readParseURL( url )
 end
 
 private def makeInfoArr( url )
+
+  # ページ読み込み
   page_html = readParseURL(url)
 
-  # ここの処理考えてなかった。
-  # 1ページに複数のショップ情報あるんだった。
-  # 多分構造が一緒で、ループで取る感じになるんじゃないかな。
-  #
-
-  for num in 0..30 do
+  # 1ページごとに情報を収集して回る
+  default_shop_count = 30
+  for num in 0..default_shop_count do
     shop_info_arr = Array.new(size = 7, obj = "")
 
-    # ショップ名
-    puts name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[num]
-    # 楽天ショップURL
-    url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num]
-    # 感想数
-    number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[num]
-    # ジャンル
-    genre                       = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[num]
-    # 開店日
-    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[num]
-    # クレジット決済可否
-    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')[num]
-    # コンビニ決済可否
-    convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[num]
+    # [DONE]ショップ名
+    name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b/text()')[num]
 
-    shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+    # [DONE]楽天ショップURL
+    # puts url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num]
+    url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num].to_s
+    url = url[url.index("href=").to_i+6..url.index("target=").to_i-3]
+
+    # [DONE]感想数
+    noi                         = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]/text()')[num].to_s
+    number_of_impressions       = noi[noi.index("想").to_i+2..noi.index("件").to_i-1]
+
+    # [DONE]ジャンル 【】を除去したいかも
+    genre = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]/text()')[num].to_s
+    # genre = genre[1..genre.length-2].gsub("&gt;", ">")
+
+    # [DONE]開店日
+    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]/text()')[num]
+
+    # クレジット決済可否
+    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')[num].to_s
+    if credit_propriety.include?("クレジットカード決済可能") then
+      credit_propriety = "クレジットカード決済可"
+    else
+      credit_propriety = "クレジットカード決済否"
+    end
+    credit_propriety
+
+    # コンビニ決済可否
+    convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[num].to_s
+    if convenience_store_propriety.include?("コンビニ決済可能") then
+      convenience_store_propriety = "コンビニ決済可"
+    else
+      convenience_store_propriety = "コンビニ決済否"
+    end
+    puts convenience_store_propriety
+
+
+    # shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
 
     # shop_genre_info_all_arr.push(shop_info_arr)
   end
