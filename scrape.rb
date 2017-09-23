@@ -36,21 +36,40 @@ private def readParseURL( url )
 end
 
 private def makeInfoArr( url )
-  html = readParseURL(url)
+  page_html = readParseURL(url)
 
   # ここの処理考えてなかった。
   # 1ページに複数のショップ情報あるんだった。
-  shop_info_arr = Array.new(size = 7, obj = "")
-  name                        = "ショップ名"
-  url                         = "楽天ショップURL"
-  number_of_impressions       = "感想数"
-  genre                       = "ジャンル"
-  opening_date                = "開店日"
-  credit_propriety            = "クレジット決済可否"
-  convenience_store_propriety = "コンビニ決済可否"
-  shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+  # 多分構造が一緒で、ループで取る感じになるんじゃないかな。
+  #
 
-  return shop_info_arr
+  # for i 0..30 in
+    shop_info_arr = Array.new(size = 7, obj = "")
+
+    # "ショップ名"
+    name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[0]
+
+    # "楽天ショップURL"
+    url                         = page_html.xpath('')
+
+    # "感想数"
+    number_of_impressions  = page_html.xpath('')
+
+    # "ジャンル"
+    genre                       = page_html.xpath('')
+
+    # "開店日"
+    opening_date                = page_html.xpath('')
+
+    # "クレジット決済可否"
+    credit_propriety            = page_html.xpath('')
+
+    # "コンビニ決済可否"
+    convenience_store_propriety = page_html.xpath('')
+    shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+
+    shop_genre_info_all_arr.push(shop_info_arr)
+  # end
 
 end
 
@@ -89,9 +108,9 @@ make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
     onward_second_page_url = url_head + page.to_s + url_tail
 
     # 情報を取得して集める
-    #   shop_genre_info_all_arr.push(makeInfoArr(onward_second_page_url))
+    makeInfoArr(onward_second_page_url)
 
-    end
+  end
 
   rescue => e
     print("Error:")
