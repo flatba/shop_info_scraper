@@ -59,24 +59,18 @@ end
 make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
 # max_num = make_shop_genre_url_all.count
-for shop_genre_num in 0..0
+# for shop_genre_num in 0..0
 
   begin
 
     # ジャンルのURLにアクセスしてhtml情報を取得
-    # url = make_shop_genre_url_all[shop_genre_num]
-    # charset = nil
-    # html = open(url, "r:euc-jp").read.encode("utf-8") do |f|
-    #   puts charset = f.charset
-    #   f.read
-    # end
-    # shop_genre_html = Nokogiri::HTML.parse(html, nil, charset)
-    shop_genre_html = readParseURL(make_shop_genre_url_all[shop_genre_num])
+    shop_genre_html = readParseURL(make_shop_genre_url_all[0])
 
     # ページ数を取得する
-    puts all_shop_count　= shop_genre_html.xpath('//tr[@valign="top"]/td[@nowrap]/font[@size="-1"]')
-    shop_count = 1807          # 全店舗数
-    page_count = shop_count/30 # ページ数
+    all_shop_count = shop_genre_html.xpath('//tr[@valign="top"]/td[@nowrap]/font[@size="-1"]').first.to_s
+    all_shop_count = all_shop_count[ all_shop_count.index("全")+2..all_shop_count.index("店")-1 ].delete!(',')
+    shop_count = all_shop_count.to_i  # 全店舗数
+    page_count = shop_count/30        # ページ数
     if shop_count%30 != 0 then
       page_count = page_count + 1
     end
@@ -88,16 +82,16 @@ for shop_genre_num in 0..0
     url_head = onward_second_page_url[0, slice_num]
     url_tail = onward_second_page_url[slice_num+1, length_num]
 
-    # # 各ページのURLを開く
-    # for page in 1..page_count
+    # 各ページのURLを開く
+    for page in 1..page_count
 
-    #   # ページごとのURLを生成する
-    # onward_second_page_url = url_head + page.to_s + url_tail
+    # ページごとのURLを生成する
+    onward_second_page_url = url_head + page.to_s + url_tail
 
-    #   # 情報を取得して集める
+    # 情報を取得して集める
     #   shop_genre_info_all_arr.push(makeInfoArr(onward_second_page_url))
 
-    # end
+    end
 
   rescue => e
     print("Error:")
@@ -116,5 +110,5 @@ for shop_genre_num in 0..0
 
   # 頭に戻って、次のshop_genre_url_arrを読み込む
 
-end
+# end
 
