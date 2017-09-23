@@ -100,7 +100,7 @@ end
 make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
 # そのジャンルの全てのページにアクセスする
-for shop_genre_num in 0..0 # ..0を..make_shop_genre_url_all.countに置き換える
+for shop_genre_num in 0..make_shop_genre_url_all.count # ..make_shop_genre_url_all.countに置き換える
 
   begin
 
@@ -128,7 +128,7 @@ for shop_genre_num in 0..0 # ..0を..make_shop_genre_url_all.countに置き換�
     for page in 1..page_count
       # ページごとのURLを生成する
       onward_second_page_url = url_head + page.to_s + url_tail
-      # 情報を取得して集める
+      # 情報を取得して集めるて書き出しする
       makeInfoArr(onward_second_page_url)
     end
 
@@ -137,17 +137,6 @@ for shop_genre_num in 0..0 # ..0を..make_shop_genre_url_all.countに置き換�
     puts e
   end
 
-  # # ジャンル終わったらCSVで書き出す
-  # # shop_genre_info_arr to CSV
-  # # ファイルへ書き込み
-  # CSV.open("path/to/file.csv", "wb") do |csv|
-  #   csv << ["row", "of", "CSV", "data"]
-  #   csv << ["another", "row"]
-  #   # ...
-  # end
-
-  # 頭に戻って、次のshop_genre_url_arrを読み込む
-  # puts shop_genre_info_all_arr
 end
 
 
