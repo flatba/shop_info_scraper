@@ -46,28 +46,30 @@ private def makeInfoArr( url )
   # for i 0..30 in
     shop_info_arr = Array.new(size = 7, obj = "")
 
-    # "ショップ名"
+    # ショップ名
     name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[0]
 
-    # "楽天ショップURL"
+    # 楽天ショップURL
     url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[0]
 
-    # "感想数"
+    # 感想数
     number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[0]
 
-    # "ジャンル"
-    genre                  = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[0]
+    # ジャンル
+    genre                       = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[0]
 
-    # "開店日"
+    # 開店日
     opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[0]
 
-    # "クレジット決済可否"
-    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]').attribute('alt')
+    # クレジット決済可否
+    puts credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]')
+
+    # puts credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img').attribute('src')
 
     # https://r.r10s.jp/com/img/icon/cir_cs.gif
     # https://r.r10s.jp/com/img/icon/cir_cs_off.gif
 
-    # "コンビニ決済可否"
+    # コンビニ決済可否
     convenience_store_propriety = page_html.xpath('')
     shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
 
