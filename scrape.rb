@@ -62,15 +62,15 @@ private def makeInfoArr( url )
     opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[0]
 
     # クレジット決済可否
-    puts credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]')
+    # https://r.r10s.jp/com/img/icon/cir_cs_off.gifになっているものもあるので、あとで修正する
+    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]')
 
     # puts credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img').attribute('src')
 
-    # https://r.r10s.jp/com/img/icon/cir_cs.gif
-    # https://r.r10s.jp/com/img/icon/cir_cs_off.gif
-
     # コンビニ決済可否
-    convenience_store_propriety = page_html.xpath('')
+    # https://r.r10s.jp/com/img/icon/cir_cs_off.gifになっているものもあるので、あとで修正する
+    puts convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')
+
     shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
 
     shop_genre_info_all_arr.push(shop_info_arr)
