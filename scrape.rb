@@ -50,7 +50,7 @@ private def makeInfoArr( url )
     name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[0]
 
     # "楽天ショップURL"
-    url                         = page_html.xpath('')
+    puts url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[0]
 
     # "感想数"
     number_of_impressions  = page_html.xpath('')
