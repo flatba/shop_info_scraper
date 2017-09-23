@@ -6,7 +6,8 @@ require 'csv'
 
 base_url = "https://www.rakuten.co.jp/shop/"
 search_word = "http://directory.rakuten.co.jp/rms/sd/directory/vc/s19tz"
-
+csv_directory_path = "/Users/flatba/dev/shop_info_scraper"
+# shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
 
 private def makeShopGenreUrlAll( read_url, read_word )
   shop_genre_url_arr = Array.new
@@ -44,47 +45,52 @@ private def makeInfoArr( url )
   for num in 0..default_shop_count do
     shop_info_arr = Array.new(size = 7, obj = "")
 
-    # [DONE]ショップ名
-    name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b/text()')[num]
+    shop_name                     = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b/text()')[num].to_s
 
-    # [DONE]楽天ショップURL
-    # puts url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num]
-    url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num].to_s
-    url = url[url.index("href=").to_i+6..url.index("target=").to_i-3]
+    # 最後のページで30件未満の場合の回避処理
+    if shop_name == nil then
+      return
+    end
 
-    # [DONE]感想数
-    noi                         = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]/text()')[num].to_s
-    number_of_impressions       = noi[noi.index("想").to_i+2..noi.index("件").to_i-1]
+    rakuten_shop_url              = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num].to_s
+    rakuten_shop_url = url[url.index("href=").to_i..url.index("target=").to_i-3]
 
-    # [DONE]ジャンル 【】を除去したいかも
+    number_of_impressions         = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]/text()')[num].to_s
+    number_of_impressions         = number_of_impressions[number_of_impressions.index("想").to_i+2..number_of_impressions.index("件").to_i-1]
+
     genre = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]/text()')[num].to_s
-    # genre = genre[1..genre.length-2].gsub("&gt;", ">")
+    # genre = genre[1..genre.length-2].gsub("&gt;", ">") # 【】を除去したいかも
 
-    # [DONE]開店日
-    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]/text()')[num]
+    opening_date                  = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]/text()')[num].to_s
 
-    # クレジット決済可否
-    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')[num].to_s
+    credit_propriety              = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')[num].to_s
     if credit_propriety.include?("クレジットカード決済可能") then
       credit_propriety = "クレジットカード決済可"
     else
       credit_propriety = "クレジットカード決済否"
     end
-    credit_propriety
 
-    # コンビニ決済可否
-    convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[num].to_s
+    convenience_store_propriety   = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[num].to_s
     if convenience_store_propriety.include?("コンビニ決済可能") then
       convenience_store_propriety = "コンビニ決済可"
     else
       convenience_store_propriety = "コンビニ決済否"
     end
-    puts convenience_store_propriety
 
-
-    # shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+    puts shop_info_arr = [
+      shop_name,
+      rakuten_shop_url,
+      number_of_impressions,
+      genre,opening_date,
+      credit_propriety,
+      convenience_store_propriety
+    ]
 
     # shop_genre_info_all_arr.push(shop_info_arr)
+    CSV.open('rakuten_shop_info.csv','a') do |info|
+      info << shop_info_arr
+    end
+
   end
 
 end
@@ -93,10 +99,8 @@ end
 # 全てのジャンルのURLを取得する
 make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
-# max_num = make_shop_genre_url_all.count
-for shop_genre_num in 0..0
-
-  # shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
+# そのジャンルの全てのページにアクセスする
+for shop_genre_num in 0..0 # ..0を..make_shop_genre_url_all.countに置き換える
 
   begin
 
