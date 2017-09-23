@@ -6,7 +6,6 @@ require 'csv'
 
 base_url = "https://www.rakuten.co.jp/shop/"
 search_word = "http://directory.rakuten.co.jp/rms/sd/directory/vc/s19tz"
-shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
 
 
 private def makeShopGenreUrlAll( read_url, read_word )
@@ -43,35 +42,28 @@ private def makeInfoArr( url )
   # 多分構造が一緒で、ループで取る感じになるんじゃないかな。
   #
 
-  # for i 0..30 in
+  for num in 0..30 do
     shop_info_arr = Array.new(size = 7, obj = "")
 
     # ショップ名
-    name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[0]
-
+    puts name                        = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@href]/b')[num]
     # 楽天ショップURL
-    url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[0]
-
+    url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num]
     # 感想数
-    number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[0]
-
+    number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[num]
     # ジャンル
-    genre                       = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[0]
-
+    genre                       = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[num]
     # 開店日
-    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[0]
-
+    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[num]
     # クレジット決済可否
-    # https://r.r10s.jp/com/img/icon/cir_cs_off.gifになっているものもあるので、あとで修正する
-    puts page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')
-
+    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')[num]
     # コンビニ決済可否
-    page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[0]
+    convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[num]
 
-    # shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+    shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
 
     # shop_genre_info_all_arr.push(shop_info_arr)
-  # end
+  end
 
 end
 
@@ -81,6 +73,8 @@ make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
 # max_num = make_shop_genre_url_all.count
 for shop_genre_num in 0..0
+
+  # shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
 
   begin
 
@@ -117,7 +111,6 @@ for shop_genre_num in 0..0
     puts e
   end
 
-
   # # ジャンル終わったらCSVで書き出す
   # # shop_genre_info_arr to CSV
   # # ファイルへ書き込み
@@ -128,6 +121,7 @@ for shop_genre_num in 0..0
   # end
 
   # 頭に戻って、次のshop_genre_url_arrを読み込む
-
+  # puts shop_genre_info_all_arr
 end
+
 
