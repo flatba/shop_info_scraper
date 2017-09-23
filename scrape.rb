@@ -63,17 +63,14 @@ private def makeInfoArr( url )
 
     # クレジット決済可否
     # https://r.r10s.jp/com/img/icon/cir_cs_off.gifになっているものもあるので、あとで修正する
-    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]')
-
-    # puts credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img').attribute('src')
+    puts page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif" or @src="https://r.r10s.jp/com/img/icon/cir_credit_off.gif"]')
 
     # コンビニ決済可否
-    # https://r.r10s.jp/com/img/icon/cir_cs_off.gifになっているものもあるので、あとで修正する
-    puts convenience_store_propriety = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')
+    page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_cs.gif" or @src="https://r.r10s.jp/com/img/icon/cir_cs_off.gif"]')[0]
 
-    shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+    # shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
 
-    shop_genre_info_all_arr.push(shop_info_arr)
+    # shop_genre_info_all_arr.push(shop_info_arr)
   # end
 
 end
@@ -83,7 +80,7 @@ end
 make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
 # max_num = make_shop_genre_url_all.count
-# for shop_genre_num in 0..0
+for shop_genre_num in 0..0
 
   begin
 
@@ -107,15 +104,13 @@ make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
     url_tail = onward_second_page_url[slice_num+1, length_num]
 
     # 各ページのURLを開く
+    page_count = 1
     for page in 1..page_count
-
-    # ページごとのURLを生成する
-    onward_second_page_url = url_head + page.to_s + url_tail
-
-    # 情報を取得して集める
-    makeInfoArr(onward_second_page_url)
-
-  end
+      # ページごとのURLを生成する
+      onward_second_page_url = url_head + page.to_s + url_tail
+      # 情報を取得して集める
+      makeInfoArr(onward_second_page_url)
+    end
 
   rescue => e
     print("Error:")
@@ -134,5 +129,5 @@ make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
   # 頭に戻って、次のshop_genre_url_arrを読み込む
 
-# end
+end
 
