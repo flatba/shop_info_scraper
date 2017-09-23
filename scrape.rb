@@ -53,13 +53,14 @@ private def makeInfoArr( url )
     url                         = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[0]
 
     # "感想数"
-    number_of_impressions  = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[0]
+    number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[0]
 
     # "ジャンル"
-    genre                       = page_html.xpath('')
+    # ここは複数取れちゃうので、一個おき？２個おき？で取得するようになるかも
+    genre                  = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1"]')[0]
 
     # "開店日"
-    opening_date                = page_html.xpath('')
+    opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[0]
 
     # "クレジット決済可否"
     credit_propriety            = page_html.xpath('')
