@@ -35,6 +35,12 @@ private def readParseURL( url )
 
 end
 
+private def outputCSV( shop_info_arr )
+    CSV.open('rakuten_shop_info.csv','a') do |info|
+      info << shop_info_arr
+    end
+end
+
 private def makeInfoArr( url )
 
   # ページ読み込み
@@ -53,7 +59,7 @@ private def makeInfoArr( url )
     end
 
     rakuten_shop_url              = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num].to_s
-    rakuten_shop_url = url[url.index("href=").to_i..url.index("target=").to_i-3]
+    rakuten_shop_url = rakuten_shop_url[rakuten_shop_url.index("href=").to_i+6..rakuten_shop_url.index("target=").to_i-3]
 
     number_of_impressions         = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]/text()')[num].to_s
     number_of_impressions         = number_of_impressions[number_of_impressions.index("想").to_i+2..number_of_impressions.index("件").to_i-1]
@@ -87,9 +93,8 @@ private def makeInfoArr( url )
     ]
 
     # shop_genre_info_all_arr.push(shop_info_arr)
-    CSV.open('rakuten_shop_info.csv','a') do |info|
-      info << shop_info_arr
-    end
+    outputCSV(shop_info_arr)
+
 
   end
 
@@ -105,7 +110,7 @@ for shop_genre_num in 0..make_shop_genre_url_all.count # ..make_shop_genre_url_a
   begin
 
     # ジャンルのURLにアクセスしてhtml情報を取得
-    shop_genre_html = readParseURL(make_shop_genre_url_all[0])
+    shop_genre_html = readParseURL(make_shop_genre_url_all[shop_genre_num])
 
     # ページ数を取得する
     all_shop_count = shop_genre_html.xpath('//tr[@valign="top"]/td[@nowrap]/font[@size="-1"]').first.to_s
@@ -124,7 +129,7 @@ for shop_genre_num in 0..make_shop_genre_url_all.count # ..make_shop_genre_url_a
     url_tail = onward_second_page_url[slice_num+1, length_num]
 
     # 各ページのURLを開く
-    page_count = 1
+    # page_count = 1
     for page in 1..page_count
       # ページごとのURLを生成する
       onward_second_page_url = url_head + page.to_s + url_tail
