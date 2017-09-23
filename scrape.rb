@@ -56,14 +56,16 @@ private def makeInfoArr( url )
     number_of_impressions       = page_html.xpath('//tbody/tr/td/a[@target="_top"]/font[@size="-1"]')[0]
 
     # "ジャンル"
-    # ここは複数取れちゃうので、一個おき？２個おき？で取得するようになるかも
-    genre                  = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1"]')[0]
+    genre                  = page_html.xpath('//tbody/tr/td[@width="50%"]/font[@size="-1" and not(*)]')[0]
 
     # "開店日"
     opening_date                = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@bgcolor="#f6f6dc"]/font[@size="-1"]')[0]
 
     # "クレジット決済可否"
-    credit_propriety            = page_html.xpath('')
+    credit_propriety            = page_html.xpath('//tbody/tr[@bgcolor="#feefd5"]/td[@nowrap]/img[@src="https://r.r10s.jp/com/img/icon/cir_credit.gif"]').attribute('alt')
+
+    # https://r.r10s.jp/com/img/icon/cir_cs.gif
+    # https://r.r10s.jp/com/img/icon/cir_cs_off.gif
 
     # "コンビニ決済可否"
     convenience_store_propriety = page_html.xpath('')
