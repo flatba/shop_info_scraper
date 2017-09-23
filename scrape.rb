@@ -9,7 +9,7 @@ search_word = "http://directory.rakuten.co.jp/rms/sd/directory/vc/s19tz"
 shop_genre_info_all_arr = Array.new # ショップジャンルURLから得られたショップ情報を貯める
 
 
-def make_shop_genre_url_arr( read_url, read_word )
+private def makeShopGenreUrlAll( read_url, read_word )
   shop_genre_url_arr = Array.new
   shop_genre_html_all = Nokogiri.HTML(open(read_url))
   shop_genre_html_all.css('a').each do |element|
@@ -18,16 +18,25 @@ def make_shop_genre_url_arr( read_url, read_word )
       shop_genre_url_arr.push(element[:href])
     end
   end
+
   return shop_genre_url_arr
+
 end
 
-private String def makeInfoArr(url)
+private def readParseURL( url )
   charset = nil
   html = open(url, "r:euc-jp").read.encode("utf-8") do |f|
-    puts charset = f.charset
+    charset = f.charset
     f.read
   end
   html = Nokogiri::HTML.parse(html, nil, charset)
+
+  return html
+
+end
+
+private def makeInfoArr( url )
+  html = readParseURL(url)
 
   # ここの処理考えてなかった。
   # 1ページに複数のショップ情報あるんだった。
@@ -40,30 +49,32 @@ private String def makeInfoArr(url)
   credit_propriety            = "クレジット決済可否"
   convenience_store_propriety = "コンビニ決済可否"
   shop_info_arr = [name,url,number_of_impressions,genre,opening_date,credit_propriety,convenience_store_propriety]
+
   return shop_info_arr
+
 end
 
 
 # 全てのジャンルのURLを取得する
-make_shop_genre_url_all = make_shop_genre_url_arr(base_url, search_word)
-
+make_shop_genre_url_all = makeShopGenreUrlAll(base_url, search_word)
 
 # max_num = make_shop_genre_url_all.count
 for shop_genre_num in 0..0
 
   begin
 
-    # ジャンルのURLにアクセスする
-    url = make_shop_genre_url_all[shop_genre_num]
-    charset = nil
-    html = open(url, "r:euc-jp").read.encode("utf-8") do |f|
-      puts charset = f.charset
-      f.read
-    end
-    shop_genre_html = Nokogiri::HTML.parse(html, nil, charset)
+    # ジャンルのURLにアクセスしてhtml情報を取得
+    # url = make_shop_genre_url_all[shop_genre_num]
+    # charset = nil
+    # html = open(url, "r:euc-jp").read.encode("utf-8") do |f|
+    #   puts charset = f.charset
+    #   f.read
+    # end
+    # shop_genre_html = Nokogiri::HTML.parse(html, nil, charset)
+    shop_genre_html = readParseURL(make_shop_genre_url_all[shop_genre_num])
 
     # ページ数を取得する
-    # puts all_shop_count　= shop_genre_html.xpath('/tbody/tr/td/table/tbody/tr/td/font') //未完
+    puts all_shop_count　= shop_genre_html.xpath('//tr[@valign="top"]/td[@nowrap]/font[@size="-1"]')
     shop_count = 1807          # 全店舗数
     page_count = shop_count/30 # ページ数
     if shop_count%30 != 0 then
@@ -77,16 +88,16 @@ for shop_genre_num in 0..0
     url_head = onward_second_page_url[0, slice_num]
     url_tail = onward_second_page_url[slice_num+1, length_num]
 
-    # 各ページのURLを開く
-    for page in 1..page_count
+    # # 各ページのURLを開く
+    # for page in 1..page_count
 
-      # ページごとのURLを生成する
-      onward_second_page_url = url_head + page.to_s + url_tail
+    #   # ページごとのURLを生成する
+    # onward_second_page_url = url_head + page.to_s + url_tail
 
-      # 情報を取得して集める
-      shop_genre_info_all_arr.push(makeInfoArr(onward_second_page_url))
+    #   # 情報を取得して集める
+    #   shop_genre_info_all_arr.push(makeInfoArr(onward_second_page_url))
 
-    end
+    # end
 
   rescue => e
     print("Error:")
