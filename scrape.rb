@@ -56,6 +56,7 @@ private def makeInfoArr( url )
     # 最後のページで30件未満の場合の回避処理
     if shop_name == nil then
       return
+      # ここreturnじゃなくてcontinueのほうがいいかも
     end
 
     rakuten_shop_url              = page_html.xpath('//tbody/tr/td/font[@size="-1"]/a[@target="_top"]')[num].to_s
